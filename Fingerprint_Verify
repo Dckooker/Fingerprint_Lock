@@ -1,0 +1,86 @@
+#include "FPS_GT511C3.h"
+#include "SoftwareSerial.h"
+
+#include <Servo.h>
+
+
+Servo myservo;
+int unlock = 0; 
+int lock = 180; 
+
+int tracker = 0;
+
+FPS_GT511C3 fps(5, 4);          
+                                
+void setup()
+{
+  Serial.begin(9600);           //default baud rate
+  delay(100);
+  fps.Open();
+  fps.SetLED(true);
+
+   myservo.attach(9); 
+   
+}
+
+void loop()
+{
+
+  // Identify fingerprint test
+  if (fps.IsPressFinger())
+  {
+    fps.CaptureFinger(false);
+    int id = fps.Identify1_N();
+
+    /*////////////////////////////////////////////////*/
+    if (id <200)
+    {
+       
+      Serial.print("Verified ID:");
+      Serial.println(id);
+      
+    if (tracker == 0){
+      tracker = tracker +1;
+      delay(15);
+      
+        myservo.attach(9);
+          delay(15); 
+          myservo.write(unlock);
+          delay(15); 
+          myservo.detach();  
+          delay(500); 
+    }
+
+    else if (tracker == 1){
+      tracker = tracker - 1;
+    delay(15);
+          
+        myservo.attach(9);
+          delay(15); 
+          myservo.write(lock);
+          delay(15); 
+          myservo.detach(); 
+
+    }
+          
+        Serial.print("\n");
+        Serial.print("Done\n");
+        Serial.print("\n");
+         
+          myservo.detach();         
+    }
+
+    /*/////////////////////////////////////////////////*/
+    else
+    {
+      Serial.println("Finger not found");
+       myservo.detach();  
+    }
+  }
+  else
+  {
+    Serial.println("Please press finger");
+     myservo.detach();  
+  }
+  delay(100);
+}
