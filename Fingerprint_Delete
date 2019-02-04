@@ -1,0 +1,27 @@
+#include "FPS_GT511C3.h" 
+#include "SoftwareSerial.h"
+
+
+
+FPS_GT511C3 fps(5, 4);         
+                               
+void setup()
+{
+  Serial.begin(9600);  
+
+  fps.Open();
+  fps.SetLED(false);
+  
+ 
+}
+
+void loop() {
+
+ delay(15); 
+
+  fps.DeleteAll();
+ delay(15); 
+  Serial.print("Done\n");
+ delay(15);
+ 
+}
